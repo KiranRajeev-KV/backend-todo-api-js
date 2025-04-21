@@ -11,6 +11,6 @@ export const authenticate = (req, res, next) => {
     req.userId = payload.userId;
     next();
   } catch {
-    res.status(403).json({ error: 'Invalid token' });
+    res.status(403).json({ error: 'Forbidden' });
   }
 };
