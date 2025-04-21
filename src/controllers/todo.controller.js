@@ -46,21 +46,26 @@ export const updateTodoById = async (req, res) => {
   const { id } = req.params;
 
   try {
-    const existingTodo = await prisma.todo.findUnique({
-      where: { id: Number(id) },
-    });
+    const updatedTodo = await prisma.$transaction(async (tx) => {
+      const existingTodo = await tx.todo.findUnique({
+        where: { id: Number(id) },
+      });
 
-    if (!existingTodo) {
-      return res.status(404).json({ error: 'Todo not found' });
-    }
+      if (!existingTodo) {
+        throw new Error('NOT_FOUND');
+      }
 
-    const updatedTodo = await prisma.todo.update({
-      where: { id: Number(id) },
-      data: { completed: !existingTodo.completed },
+      return await tx.todo.update({
+        where: { id: Number(id) },
+        data: { completed: !existingTodo.completed },
+      });
     });
 
     res.json(updatedTodo);
   } catch (err) {
+    if (err.message === 'NOT_FOUND') {
+      return res.status(404).json({ error: 'Todo not found' });
+    }
     res.status(500).json({ error: 'Failed to update todo' });
   }
 };
