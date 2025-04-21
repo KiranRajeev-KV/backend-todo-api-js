@@ -19,7 +19,7 @@ export const addTodo = async (req, res) => {
 export const getTodoById = async (req, res) => {
   const { id } = req.params;
   try {
-    const todo = await prisma.todo.findUnique({ where: { id } });
+    const todo = await prisma.todo.findUnique({ where: { id: Number(id) } });
     if (!todo) {
       return res.status(404).json({ error: 'Todo not found' });
     }
@@ -44,13 +44,22 @@ export const getAllTodos = async (req, res) => {
 // Update a todo by ID
 export const updateTodoById = async (req, res) => {
   const { id } = req.params;
-  const { title, completed } = req.body;
+
   try {
-    const todo = await prisma.todo.update({
-      where: { id },
-      data: { title, completed },
+    const existingTodo = await prisma.todo.findUnique({
+      where: { id: Number(id) },
     });
-    res.json(todo);
+
+    if (!existingTodo) {
+      return res.status(404).json({ error: 'Todo not found' });
+    }
+
+    const updatedTodo = await prisma.todo.update({
+      where: { id: Number(id) },
+      data: { completed: !existingTodo.completed },
+    });
+
+    res.json(updatedTodo);
   } catch (err) {
     res.status(500).json({ error: 'Failed to update todo' });
   }
@@ -60,7 +69,7 @@ export const updateTodoById = async (req, res) => {
 export const deleteTodoById = async (req, res) => {
   const { id } = req.params;
   try {
-    await prisma.todo.delete({ where: { id } });
+    await prisma.todo.delete({ where: { id: Number(id) } });
     res.json({ message: 'Todo deleted' });
   } catch (err) {
     res.status(500).json({ error: 'Failed to delete todo' });
