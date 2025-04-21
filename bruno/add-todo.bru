@@ -1,0 +1,21 @@
+meta {
+  name: add-todo
+  type: http
+  seq: 3
+}
+
+post {
+  url: http://localhost:8080/api/todos
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiJjbTlyN215ejQwMDAwMGEzc3UwdW9lNG1yIiwiaWF0IjoxNzQ1MjQ4MTUzLCJleHAiOjE3NDUzMzQ1NTN9.wvUObVzVMz3EbdM6LJ8W4TWofNj-ghy6SYjAdz0GRuQ
+}
+
+body:json {
+  {
+    "title": "todo 03"
+  }
+}
