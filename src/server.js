@@ -6,13 +6,14 @@ import todoRoutes from './routes/todo.routes.js';
 import userRoutes from './routes/user.routes.js'
 import { authenticate } from './middlewares/auth.js';
 
+
 const app = express();
 
 dotenv.config();
 app.use(cors());
 app.use(express.json());
 
-const PORT = process.env.PORT || 3000
+const PORT = process.env.PORT || 4585
 
 app.use('/api/user',userRoutes)
 app.use('/api/todos', authenticate, todoRoutes);
